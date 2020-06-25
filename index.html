@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>New Game</title>
+	<style type="text/css">
+		html {
+			height: 100%;
+			width: 100%;
+		}           
+body {
+	height: 100%;
+	width: 100%;
+	background: black;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.playBox {
+	background: #fafafa;
+	width: 500px;
+	height: 500px;
+	position: relative;
+}
+.ball {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 35px;
+	height: 35px;
+	background: url('ball.png') no-repeat center / 100% 100%;
+	z-index: 5;
+}
+.busket {
+	width: 100px;
+	height: 100px;
+	background: url('net.png') no-repeat center / 100% 100%;
+	position: absolute;
+	top: 100px;
+	right: 0;
+}
+
+.busket2{
+	width: 100px;
+	height: 100px;
+	background: url('net2.png') no-repeat center / 100% 100%;
+	position: absolute;
+	top: 100px;
+	right: 0;
+	z-index: 10;
+}
+.time {
+	color: #fff;
+    position: absolute;
+    top: 30px;
+    display: flex;
+    left: 50%;
+    font-size: 30px;
+    transform: translateX(-200px);
+}
+.score {  
+	color: #fff;
+    position: absolute;
+    top: 30px;
+    display: flex;
+    right: 50%;
+    font-size: 30px;
+    transform: translateX(200px);
+}
+.buttonPlay {
+	position: absolute;
+    top: 27px;
+    font-size: 20px;
+    background: #fff;
+    border: none;
+    padding: 10px 20px;
+}
+button {
+	font-size: 20px;
+    background: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin: 20px 0;   
+}
+.minutes {
+	margin-left: 5px;
+}
+.gameLevels {
+	display: flex;
+    flex-direction: column;
+    margin-left: -30px;
+    margin-right: 30px;
+}
+.overlay {
+	position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 30;
+    /*display: flex;*/
+    align-items: center;
+    justify-content: center;
+    background: url(https://usatftw.files.wordpress.com/2020/04/jordan-3.jpg?w=1000&h=600&crop=1) no-repeat center / cover;
+    color: #fff;
+    font-size: 80px;
+	flex-direction: column;
+	display: none;
+}
+</style>
+<div class="overlay">
+	<div class="finishResult">Looser!!!</div>
+	Your score is: <span class="finishScore">12</span>
+	<button onclick="restartGame()">Play again</button>
+</div>
+<button class="buttonPlay" onclick="countdown( '.minutes', 1, 0 )">
+	Play
+</button>
+<div class="time">
+	Time: 
+	<div class="minutes">1:00</div>
+</div>
+<div class="score">Score: <span class="ourScore">0</span></div>
+<div class="gameLevels">
+	<button onclick="makeLevel(500)">Easy</button>
+	<button onclick="makeLevel(200)">Medium</button>
+	<button onclick="makeLevel(50)">Hard</button>
+</div>
+<div class="playBox">
+	<div class="ball"></div>
+	<div class="busket"></div>
+	<div class="busket2"></div>
+</div>
+
+<script type="text/javascript">
+	var movingDirection;
+	var speed;
+	var goal = false;
+	var score = 0;
+	var started = false;
+	function makeLevel(speedLevel) {
+		speed = speedLevel;
+	}
+
+	function checkPosition() {
+		var leftBusket = document.querySelector('.busket').offsetLeft;
+		var topBusket = document.querySelector('.busket').offsetTop;
+		var busketWidth = document.querySelector('.busket').offsetWidth;
+		var leftBall = document.querySelector('.ball').offsetLeft;
+		var topBall = document.querySelector('.ball').offsetTop;
+
+		if (((leftBall > leftBusket + 20) && (leftBall < leftBusket + busketWidth - 20)) && (goal == false) && ((topBall > topBusket + 60) && (topBall < topBusket + 90))) {
+			//is goal
+
+			score += 2;
+			document.querySelector('.ourScore').innerHTML = score;
+			goal = true;
+
+			setTimeout( function replaceNet () {
+		    	var newTop = Math.floor(Math.random() * 400) + 1;   // x - высота блока - высота кольца
+				var newLeft = Math.floor(Math.random() * 400) + 1;  // x - ширина блока - ширина кольца
+
+				document.querySelector('.busket').style.top = newTop + 'px';
+		        document.querySelector('.busket').style.left = newLeft + 'px';
+
+		        document.querySelector('.busket2').style.top = newTop + 'px';
+		        document.querySelector('.busket2').style.left =  newLeft + 'px';
+
+		        goal = false;
+		    } , 500);
+		}
+	}
+	function testZone () {''
+		if ((document.querySelector('.ball').offsetTop < 0 ) || (document.querySelector('.ball').offsetTop > 465 )) {
+        	alert('Come back');
+        	document.querySelector('.ball').style.top = 0;
+        	document.querySelector('.ball').style.left = 0;
+        	clearInterval(movingDirection);
+        	// countdown( '.minutes', 1, 0 )
+        } else if ((document.querySelector('.ball').offsetLeft < 0) || (document.querySelector('.ball').offsetLeft > 465 )) {
+        	alert('Come back');
+        	document.querySelector('.ball').style.top = 0;
+        	document.querySelector('.ball').style.left = 0;
+        	clearInterval(movingDirection);
+        	// countdown( '.minutes', 1, 0 )
+        }
+        checkPosition ();
+	}
+	function moving (direction) {
+		if (direction == 'top') {
+			clearInterval(movingDirection)
+			movingDirection = setInterval (function () {
+				var currentTop = document.querySelector('.ball').offsetTop;
+	            document.querySelector('.ball').style.top = currentTop - 10 + 'px';
+	            testZone ();
+			}, speed)
+		} else if (direction == 'right') {
+			clearInterval(movingDirection)
+			movingDirection = setInterval (function () {
+				var currentLeft = document.querySelector('.ball').offsetLeft;
+	            document.querySelector('.ball').style.left = currentLeft + 10 + 'px';
+	            testZone ();
+			}, speed)
+		} else if (direction == 'left') {
+			clearInterval(movingDirection);
+			movingDirection = setInterval (function () {
+				var currentLeft = document.querySelector('.ball').offsetLeft;
+	            document.querySelector('.ball').style.left = currentLeft - 10 + 'px';
+	            testZone ();
+			}, speed)
+		} else {
+			// down
+			clearInterval(movingDirection)
+			movingDirection = setInterval (function () {
+				var currentTop = document.querySelector('.ball').offsetTop;
+	            document.querySelector('.ball').style.top = currentTop + 10 + 'px';
+				testZone ();
+			}, speed)
+		}
+	}
+	
+	document.onkeyup = function(e) { 
+		if (started == true) {
+			if (event.keyCode === 87) { 
+	            //Up (W)
+	            moving ('top');
+	        };
+	        if (event.keyCode === 68) { 
+	            //Right (D)
+	            moving ('right');
+	        };
+	        if (event.keyCode === 65) { 
+	            //Left (A)
+	            moving ('left');
+	        };
+	        if (event.keyCode === 83) { 
+	            //Down (S)
+	            moving ('bottom');
+	        };
+		}
+    };
+	    
+   function restartGame () {
+   	started = true;
+   	score = 0;
+    document.querySelector('.overlay').style.display = 'none';
+    document.querySelector('.finishScore').innerHTML = '0';
+   	countdown( '.minutes', 1, 0 );
+   	document.querySelector('.ball').style.top = 0;
+	document.querySelector('.ball').style.left = 0;
+	clearInterval(movingDirection);
+   }
+
+   function countdown( elementName, minutes, seconds )
+	{
+		started = true;
+		document.querySelector('.buttonPlay').style.display = 'none';
+	    var element, endTime, hours, mins, msLeft, time;
+
+	    function twoDigits( n )
+	    {
+	        return (n <= 9 ? "0" + n : n);
+	    }
+
+	    function updateTimer()
+	    {
+	        msLeft = endTime - (+new Date);
+	        if ( msLeft < 1000 ) {
+	            document.querySelector('.overlay').style.display = 'flex';
+	            document.querySelector('.finishScore').innerHTML = score;
+				started = false;
+	            if (score < 10) {
+	            	document.querySelector('.finishResult').innerHTML = 'Looser!';
+	            } else {
+	            	document.querySelector('.finishResult').innerHTML = 'Good job!';
+	            }
+	            clearInterval(movingDirection);
+	        } else {
+	            time = new Date( msLeft );
+	            hours = time.getUTCHours();
+	            mins = time.getUTCMinutes();
+	            element.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
+	            setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+	        }
+	    }
+
+	    element = document.querySelector( elementName );
+	    endTime = (+new Date) + 1000 * (60*minutes + seconds) + 500;
+	    updateTimer();
+	}
+
+	</script>
+</body>
+</html>
