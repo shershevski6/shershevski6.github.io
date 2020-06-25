@@ -133,10 +133,11 @@ button {
 
 <script type="text/javascript">
 	var movingDirection;
-	var speed;
+	var speed = 200;
 	var goal = false;
 	var score = 0;
 	var started = false;
+	var comedFromTop = false;
 	function makeLevel(speedLevel) {
 		speed = speedLevel;
 	}
@@ -148,7 +149,7 @@ button {
 		var leftBall = document.querySelector('.ball').offsetLeft;
 		var topBall = document.querySelector('.ball').offsetTop;
 
-		if (((leftBall > leftBusket + 20) && (leftBall < leftBusket + busketWidth - 20)) && (goal == false) && ((topBall > topBusket + 60) && (topBall < topBusket + 90))) {
+		if (((leftBall > leftBusket + 20) && (leftBall < leftBusket + busketWidth - 20)) && (goal == false) && ((topBall > topBusket + 60) && (topBall < topBusket + 90)) && (comedFromTop == true)) {
 			//is goal
 
 			score += 2;
@@ -223,18 +224,22 @@ button {
 			if (event.keyCode === 87) { 
 	            //Up (W)
 	            moving ('top');
+	            comedFromTop = false;
 	        };
 	        if (event.keyCode === 68) { 
 	            //Right (D)
 	            moving ('right');
+	            comedFromTop = false;
 	        };
 	        if (event.keyCode === 65) { 
 	            //Left (A)
 	            moving ('left');
+	            comedFromTop = false;
 	        };
 	        if (event.keyCode === 83) { 
 	            //Down (S)
 	            moving ('bottom');
+	            comedFromTop = true;
 	        };
 		}
     };
@@ -250,8 +255,7 @@ button {
 	clearInterval(movingDirection);
    }
 
-   function countdown( elementName, minutes, seconds )
-	{
+   function countdown( elementName, minutes, seconds ){
 		started = true;
 		document.querySelector('.buttonPlay').style.display = 'none';
 	    var element, endTime, hours, mins, msLeft, time;
@@ -268,7 +272,7 @@ button {
 	            document.querySelector('.overlay').style.display = 'flex';
 	            document.querySelector('.finishScore').innerHTML = score;
 				started = false;
-	            if (score < 10) {
+	            if (score < 20) {
 	            	document.querySelector('.finishResult').innerHTML = 'Looser!';
 	            } else {
 	            	document.querySelector('.finishResult').innerHTML = 'Good job!';
