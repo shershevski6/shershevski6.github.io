@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel="stylesheet" type="text/css" href="">
 	<title>New Game</title>
+	 <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
 	<style type="text/css">
 		html {
 			height: 100%;
 			width: 100%;
-		}           
+		}     
+		@font-face {
+		  font-family: 'Press Start 2p';
+		}  
 body {
 	height: 100%;
 	width: 100%;
@@ -14,6 +19,87 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+}
+.interface {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background: url('https://alfasport.by/files/images/articles/court_panel.jpg') no-repeat center / cover;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	z-index: 200;
+
+  font-family: 'Press Start 2p';
+}
+.interface.hidden {
+	display: none;
+}
+.interface_item.active {
+	color: #fff;
+}
+.interface_item {
+	text-shadow: 1px 1px pink, -1px -1px maroon;
+
+	line-height: 1.5em;
+	text-align: center;
+	text-align: center;
+	display: inline-block;
+	width: auto;
+	-webkit-border-radius: .75em;
+	-moz-border-radius: .75em;
+	-o-border-radius: .75em;
+		border-radius: .75em;
+	background-color: red;
+	-webkit-box-shadow:  0 .2em maroon;
+	-moz-box-shadow:  0 .2em maroon;
+	-o-box-shadow:  0 .2em maroon;
+	box-shadow:  0 .2em maroon;
+	color: red;
+	margin: 0 10px;
+	background-color: red;
+	background-image: -o-linear-gradient(left top, pink 3%, red 22%, maroon 99%);
+	background-image: -moz-linear-gradient(left top, pink 3%, red 22%, maroon 99%);
+	background-image: -webkit-linear-gradient(left top, pink 3%, red 22%, maroon 99%);
+	background-image: linear-gradient(left top, pink 3%, red 22%, maroon 99%);
+	cursor: pointer;
+  padding-left: 5px;
+  padding: 10px;
+}
+.rules {
+	background: #fff;
+	border-radius: 20px;
+	padding: 20px;
+	font-size: 12px;
+	margin: 40px auto;
+	max-width: 400px;
+	white-space: pre-line;
+    line-height: 1.4;
+}
+.interface_button {
+	margin: 20px 0 0;
+	text-align: center;
+	display: inline-block;
+    font-weight: bold;
+    padding: 20px;
+    text-decoration: none;
+    background-color: lightgray;
+    text-shadow: -1px -1px black, 1px 1px white;
+    color: gray;
+    -webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	-o-border-radius: 7px;
+	border-radius: 7px;
+    box-shadow: 0 .2em gray; 
+    cursor: pointer;
+}
+.interface_button:active, .interface_button:active {
+	box-shadow: none;
+	position: relative;
+	top: .2em;
 }
 .playBox {
 	background: #fafafa;
@@ -73,7 +159,6 @@ body {
     background: #fff;
     border: none;
     padding: 10px 20px;
-	    margin: 0;
 }
 button {
 	font-size: 20px;
@@ -101,31 +186,48 @@ button {
     /*display: flex;*/
     align-items: center;
     justify-content: center;
-    background: url(https://image-cdn.essentiallysports.com/wp-content/uploads/20200912202530/ssmailbag.jpg) no-repeat center / cover;
+    background: url(https://usatftw.files.wordpress.com/2020/04/jordan-3.jpg?w=1000&h=600&crop=1) no-repeat center / cover;
     color: #fff;
     font-size: 80px;
 	flex-direction: column;
 	display: none;
 }
 </style>
+<div class="interface">
+	<div class="rules">
+		To play this Game you need to press next buttons:
+		"W" - go up
+		"A" - go left
+		"S" - go down
+		"D" - go right
+		Move ball to the busket
+	</div>
+	<div class="interface-levels">
+		<div class="interface_item interface_item--level-1" onclick="makeLevel(500)">Easy</div>
+		<div class="interface_item interface_item--level-2 active" onclick="makeLevel(200)">Medium</div>
+		<div class="interface_item interface_item--level-3" onclick="makeLevel(50)">Hard</div>	
+	</div>
+	<div class="interface_button interface_button--play" onclick="countdown( '.minutes', 1, 0 )">Play</div>
+	<a class="interface_button interface_button--exit" href="http://google.com">Exit</a>
+</div>
 <div class="overlay">
 	<div class="finishResult">Looser!!!</div>
 	Your score is: <span class="finishScore">12</span>
 	<button onclick="restartGame()">Play again</button>
 </div>
-<button class="buttonPlay" onclick="countdown( '.minutes', 1, 0 )">
+<!-- <button class="buttonPlay" onclick="countdown( '.minutes', 1, 0 )">
 	Play
-</button>
+</button> -->
 <div class="time">
 	Time: 
 	<div class="minutes">1:00</div>
 </div>
 <div class="score">Score: <span class="ourScore">0</span></div>
-<div class="gameLevels">
+<!-- <div class="gameLevels">
 	<button onclick="makeLevel(500)">Easy</button>
 	<button onclick="makeLevel(200)">Medium</button>
 	<button onclick="makeLevel(50)">Hard</button>
-</div>
+</div> -->
 <div class="playBox">
 	<div class="ball"></div>
 	<div class="busket"></div>
@@ -138,7 +240,6 @@ button {
 	var goal = false;
 	var score = 0;
 	var started = false;
-	var comedFromTop = false;
 	function makeLevel(speedLevel) {
 		speed = speedLevel;
 	}
@@ -150,7 +251,7 @@ button {
 		var leftBall = document.querySelector('.ball').offsetLeft;
 		var topBall = document.querySelector('.ball').offsetTop;
 
-		if (((leftBall > leftBusket + 20) && (leftBall < leftBusket + busketWidth - 20)) && (goal == false) && ((topBall > topBusket + 60) && (topBall < topBusket + 90)) && (comedFromTop == true)) {
+		if (((leftBall > leftBusket + 20) && (leftBall < leftBusket + busketWidth - 20)) && (goal == false) && ((topBall > topBusket + 60) && (topBall < topBusket + 90))) {
 			//is goal
 
 			score += 2;
@@ -170,6 +271,18 @@ button {
 		        goal = false;
 		    } , 500);
 		}
+	}
+	document.querySelector('.interface_item--level-1').onclick = function() {
+		document.querySelector('.interface_item.active').classList.remove('active')
+		this.classList.add('active')
+	}
+	document.querySelector('.interface_item--level-2').onclick = function() {
+		document.querySelector('.interface_item.active').classList.remove('active')
+		this.classList.add('active')
+	}
+	document.querySelector('.interface_item--level-3').onclick = function() {
+		document.querySelector('.interface_item.active').classList.remove('active')
+		this.classList.add('active')
 	}
 	function testZone () {''
 		if ((document.querySelector('.ball').offsetTop < 0 ) || (document.querySelector('.ball').offsetTop > 465 )) {
@@ -225,22 +338,18 @@ button {
 			if (event.keyCode === 87) { 
 	            //Up (W)
 	            moving ('top');
-	            comedFromTop = false;
 	        };
 	        if (event.keyCode === 68) { 
 	            //Right (D)
 	            moving ('right');
-	            comedFromTop = false;
 	        };
 	        if (event.keyCode === 65) { 
 	            //Left (A)
 	            moving ('left');
-	            comedFromTop = false;
 	        };
 	        if (event.keyCode === 83) { 
 	            //Down (S)
 	            moving ('bottom');
-	            comedFromTop = true;
 	        };
 		}
     };
@@ -256,9 +365,11 @@ button {
 	clearInterval(movingDirection);
    }
 
-   function countdown( elementName, minutes, seconds ){
+   function countdown( elementName, minutes, seconds )
+	{
+		document.querySelector('.interface').classList.add('hidden');
 		started = true;
-		document.querySelector('.buttonPlay').style.display = 'none';
+		// document.querySelector('.buttonPlay').style.display = 'none';
 	    var element, endTime, hours, mins, msLeft, time;
 
 	    function twoDigits( n )
@@ -273,7 +384,7 @@ button {
 	            document.querySelector('.overlay').style.display = 'flex';
 	            document.querySelector('.finishScore').innerHTML = score;
 				started = false;
-	            if (score < 20) {
+	            if (score < 10) {
 	            	document.querySelector('.finishResult').innerHTML = 'Looser!';
 	            } else {
 	            	document.querySelector('.finishResult').innerHTML = 'Good job!';
